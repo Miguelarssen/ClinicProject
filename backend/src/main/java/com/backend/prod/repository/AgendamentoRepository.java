@@ -5,5 +5,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import com.backend.prod.model.Agendamento.Agendamento;
 
-public interface AgendamentoRepository extends JpaRepository<Agendamento, Long>, JpaSpecificationExecutor<Agendamento> {
+public interface AgendamentoRepository 
+        extends JpaRepository<Agendamento, Long>, JpaSpecificationExecutor<Agendamento> {
 }
