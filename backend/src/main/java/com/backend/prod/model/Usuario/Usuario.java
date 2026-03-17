@@ -38,7 +38,7 @@ public class Usuario {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
     private String senha;   
-
+    
     @OneToOne
     @JoinColumn(name="funcionario_id")
     private Funcionario funcionario;

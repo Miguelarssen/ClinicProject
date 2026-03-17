@@ -13,6 +13,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Funcionario extends Pessoa {
 
+    private TipoFuncionario tipoFuncionario;
+
     public Funcionario(FuncionarioCadastroDTO dados) {
         super(
             dados.nome(),
@@ -20,6 +22,7 @@ public class Funcionario extends Pessoa {
             dados.nascimento(),
             dados.email()
         );
+        this.tipoFuncionario = dados.tipoFuncionario();
     }
 
     public void atualizarFuncionario(FuncionarioAtualizaDTO dados) {

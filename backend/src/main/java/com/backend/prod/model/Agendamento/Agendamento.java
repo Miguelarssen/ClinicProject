@@ -1,6 +1,5 @@
 package com.backend.prod.model.Agendamento;
 
-
 import java.time.LocalDateTime;
 
 import com.backend.prod.model.Agendamento.DTO.AgendamentoCadastroDTO;
