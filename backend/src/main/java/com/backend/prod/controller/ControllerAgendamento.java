@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.backend.prod.model.Agendamento.Agendamento;
 import com.backend.prod.model.Agendamento.DTO.AgendamentoCadastroDTO;
 import com.backend.prod.model.Agendamento.DTO.AgendamentoListagemDTO;
 import com.backend.prod.model.Agendamento.DTO.AgendamentoResponseDTO;
@@ -60,13 +59,16 @@ public class ControllerAgendamento {
 
     @PostMapping
     @Transactional
-    public ResponseEntity<AgendamentoResponseDTO> cadastrar(@RequestBody @Valid AgendamentoCadastroDTO dados, UriComponentsBuilder uriBuilder){
+    public ResponseEntity<List<AgendamentoResponseDTO>> cadastrar(@RequestBody @Valid List<AgendamentoCadastroDTO> dados, UriComponentsBuilder uriBuilder){
 
-        Agendamento agendamento = agendamentoService.cadastrar(dados);
+        var agendamentos = dados.stream()
+                .map(agendamentoService::cadastrar)
+                .map(AgendamentoResponseDTO::new)
+                .toList();
 
-        var uri = uriBuilder.path("/agendamentos/{id}").buildAndExpand(agendamento.getId()).toUri();
+        var uri = uriBuilder.path("/agendamentos").build().toUri();
 
-        return ResponseEntity.created(uri).body(new AgendamentoResponseDTO(agendamento));
+        return ResponseEntity.created(uri).body(agendamentos);
 
     }
 }

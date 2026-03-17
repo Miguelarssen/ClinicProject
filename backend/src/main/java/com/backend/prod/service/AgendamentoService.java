@@ -25,7 +25,14 @@ public class AgendamentoService {
 
     public Agendamento cadastrar(AgendamentoCadastroDTO dados){
         Funcionario funcionario = funcionarioRepository.findByEmail(dados.emailFuncionario());
+        if(funcionario == null) {
+            throw new IllegalArgumentException("Funcionário com email " + dados.emailFuncionario() + " não encontrado");
+        }
+        
         Paciente paciente = pacienteRepository.findByEmail(dados.emailPaciente());
+        if(paciente == null) {
+            throw new IllegalArgumentException("Paciente com email " + dados.emailPaciente() + " não encontrado");
+        }
 
         Agendamento agendamento = new Agendamento(dados, funcionario, paciente);
 

@@ -7,9 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.backend.prod.model.Prontuario.Prontuario;
 import com.backend.prod.model.Prontuario.DTO.ProntuarioCadastroDTO;
-import com.backend.prod.model.Prontuario.DTO.ProntuarioAtualizaDTO;
 import com.backend.prod.model.Prontuario.DTO.ProntuarioListagemDTO;
 import com.backend.prod.model.Prontuario.DTO.ProntuarioResponseDTO;
 import com.backend.prod.repository.ProntuarioRepository;
@@ -42,11 +40,14 @@ public class ControllerProntuario {
 
     @PostMapping
     @Transactional
-    public ResponseEntity<ProntuarioResponseDTO> cadastrar(@RequestBody @Valid ProntuarioCadastroDTO dados, UriComponentsBuilder uriBuilder){
-        Prontuario prontuario = prontuarioService.cadastrar(dados);
-        var uri = uriBuilder.path("/prontuarios/{id}").buildAndExpand(prontuario.getId()).toUri();
+    public ResponseEntity<List<ProntuarioResponseDTO>> cadastrar(@RequestBody @Valid List<ProntuarioCadastroDTO> dados, UriComponentsBuilder uriBuilder){
+        var prontuarios = dados.stream()
+                .map(prontuarioService::cadastrar)
+                .map(ProntuarioResponseDTO::new)
+                .toList();
+        var uri = uriBuilder.path("/prontuarios").build().toUri();
 
-        return ResponseEntity.created(uri).body(new ProntuarioResponseDTO(prontuario));
+        return ResponseEntity.created(uri).body(prontuarios);
 
     }
 }

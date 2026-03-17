@@ -15,7 +15,6 @@ import com.backend.prod.model.Usuario.DTO.LoginDTO;
 import com.backend.prod.model.Usuario.DTO.UsuarioCadastroDTO;
 import com.backend.prod.model.Usuario.DTO.UsuarioListagemDTO;
 import com.backend.prod.model.Usuario.DTO.UsuarioResponseDTO;
-import com.backend.prod.model.Usuario.Usuario;
 import com.backend.prod.repository.FuncionarioRepository;
 import com.backend.prod.repository.UsuarioRepository;
 import com.backend.prod.service.UsuarioService;
@@ -42,18 +41,16 @@ public class ControllerUsuario {
 
     @PostMapping
     @Transactional
-    public ResponseEntity<UsuarioResponseDTO> cadastrar(@RequestBody @Valid UsuarioCadastroDTO dados, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<List<UsuarioResponseDTO>> cadastrar(@RequestBody @Valid List<UsuarioCadastroDTO> dados, UriComponentsBuilder uriBuilder) {
 
-        Usuario usuario = usuarioService.cadastrar(dados);
+        var usuarios = dados.stream()
+                .map(usuarioService::cadastrar)
+                .map(UsuarioResponseDTO::new)
+                .toList();
 
-        var uri = uriBuilder
-                .path("/usuarios/{id}")
-                .buildAndExpand(usuario.getId())
-                .toUri();
+        var uri = uriBuilder.path("/usuarios").build().toUri();
 
-        return ResponseEntity
-                .created(uri)
-                .body(new UsuarioResponseDTO(usuario));
+        return ResponseEntity.created(uri).body(usuarios);
     }
 
     @Autowired

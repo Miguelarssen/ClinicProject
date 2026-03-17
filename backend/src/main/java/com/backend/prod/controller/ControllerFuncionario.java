@@ -40,23 +40,31 @@ public class ControllerFuncionario {
     
     @PostMapping
     @Transactional  
-    public ResponseEntity<FuncionarioResponseDTO> cadastrar(@RequestBody @Valid FuncionarioCadastroDTO dados, UriComponentsBuilder uriBuilder){
-        var funcionario = new Funcionario(dados); 
-        repository.save(funcionario);
+    public ResponseEntity<List<FuncionarioResponseDTO>> cadastrar(@RequestBody @Valid List<FuncionarioCadastroDTO> dados, UriComponentsBuilder uriBuilder){
+        var funcionarios = dados.stream()
+                .map(Funcionario::new)
+                .peek(repository::save)
+                .map(FuncionarioResponseDTO::new)
+                .toList();
 
-        var uri = uriBuilder.path("/funcionarios/{id}").buildAndExpand(funcionario.getId()).toUri();
+        var uri = uriBuilder.path("/funcionarios").build().toUri();
 
-        return ResponseEntity.created(uri).body(new FuncionarioResponseDTO(funcionario));        
+        return ResponseEntity.created(uri).body(funcionarios);        
     }
     
     @PutMapping
     @Transactional
-    public ResponseEntity<FuncionarioResponseDTO> atualizar(@RequestBody @Valid FuncionarioAtualizaDTO dados){
-        var funcionario = repository.getReferenceById(dados.id());
-        funcionario.atualizarFuncionario(dados);
+    public ResponseEntity<List<FuncionarioResponseDTO>> atualizar(@RequestBody @Valid List<FuncionarioAtualizaDTO> dados){
+        var funcionarios = dados.stream()
+                .map(dto -> {
+                    var funcionario = repository.getReferenceById(dto.id());
+                    funcionario.atualizarFuncionario(dto);
+                    return funcionario;
+                })
+                .map(FuncionarioResponseDTO::new)
+                .toList();
         
-        return ResponseEntity.ok(new FuncionarioResponseDTO(funcionario));
+        return ResponseEntity.ok(funcionarios);
     }
- 
-    
 }
+

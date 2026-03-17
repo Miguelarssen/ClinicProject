@@ -40,23 +40,31 @@ public class ControllerPaciente {
     
     @PostMapping
     @Transactional  
-    public ResponseEntity<PacienteResponseDTO> cadastrar(@RequestBody @Valid PacienteCadastroDTO dados, UriComponentsBuilder uriBuilder){
-        var paciente = new Paciente(dados); 
-        repository.save(paciente);
+    public ResponseEntity<List<PacienteResponseDTO>> cadastrar(@RequestBody @Valid List<PacienteCadastroDTO> dados, UriComponentsBuilder uriBuilder){
+        var pacientes = dados.stream()
+                .map(Paciente::new)
+                .peek(repository::save)
+                .map(PacienteResponseDTO::new)
+                .toList();
 
-        var uri = uriBuilder.path("/pacientes/{id}").buildAndExpand(paciente.getId()).toUri();
+        var uri = uriBuilder.path("/pacientes").build().toUri();
 
-        return ResponseEntity.created(uri).body(new PacienteResponseDTO(paciente));        
+        return ResponseEntity.created(uri).body(pacientes);        
     }
     
     @PutMapping
     @Transactional
-    public ResponseEntity<PacienteResponseDTO> atualizar(@RequestBody @Valid PacienteAtualizaDTO dados){
-        var Paciente = repository.getReferenceById(dados.id());
-        Paciente.atualizarPaciente(dados);
+    public ResponseEntity<List<PacienteResponseDTO>> atualizar(@RequestBody @Valid List<PacienteAtualizaDTO> dados){
+        var pacientes = dados.stream()
+                .map(dto -> {
+                    var paciente = repository.getReferenceById(dto.id());
+                    paciente.atualizarPaciente(dto);
+                    return paciente;
+                })
+                .map(PacienteResponseDTO::new)
+                .toList();
         
-        return ResponseEntity.ok(new PacienteResponseDTO(Paciente));
+        return ResponseEntity.ok(pacientes);
     }
-
-    
 }
+
