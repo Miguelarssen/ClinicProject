@@ -22,6 +22,10 @@ import com.backend.prod.repository.FuncionarioRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+
 @RestController
 @RequestMapping("/funcionarios")
 public class ControllerFuncionario {
@@ -31,9 +35,9 @@ public class ControllerFuncionario {
 
     @GetMapping
     @Transactional
-    public ResponseEntity<List<FuncionarioListagemDTO>> listar(){ 
+    public ResponseEntity<Page<FuncionarioListagemDTO>> listar(@PageableDefault(size = 10) Pageable pageable){ 
 
-        var funcionarios = repository.findAll().stream().map(FuncionarioListagemDTO::new).toList();
+        var funcionarios = repository.findAll(pageable).map(FuncionarioListagemDTO::new);
         return ResponseEntity.ok(funcionarios);
 
     }

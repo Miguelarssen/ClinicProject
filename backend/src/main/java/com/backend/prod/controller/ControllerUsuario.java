@@ -22,6 +22,10 @@ import com.backend.prod.service.UsuarioService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+
 @RestController
 @RequestMapping("/usuarios")
 public class ControllerUsuario {
@@ -34,8 +38,8 @@ public class ControllerUsuario {
 
     @GetMapping
     @Transactional
-    public ResponseEntity<List<UsuarioListagemDTO>> listar(){
-        var usuarios = usuarioRepository.findAll().stream().map(UsuarioListagemDTO::new).toList();
+    public ResponseEntity<Page<UsuarioListagemDTO>> listar(@PageableDefault(size = 10) Pageable pageable){
+        var usuarios = usuarioRepository.findAll(pageable).map(UsuarioListagemDTO::new);
         return ResponseEntity.ok(usuarios);
     }
 

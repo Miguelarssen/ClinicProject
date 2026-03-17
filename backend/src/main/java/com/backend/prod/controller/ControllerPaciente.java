@@ -22,6 +22,10 @@ import com.backend.prod.repository.PacienteRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+
 @RestController
 @RequestMapping("/pacientes")
 public class ControllerPaciente {
@@ -31,9 +35,9 @@ public class ControllerPaciente {
 
     @GetMapping
     @Transactional
-    public ResponseEntity<List<PacienteListagemDTO>> listar(){ 
+    public ResponseEntity<Page<PacienteListagemDTO>> listar(@PageableDefault(size = 10) Pageable pageable){ 
 
-        var pacientes = repository.findAll().stream().map(PacienteListagemDTO::new).toList();
+        var pacientes = repository.findAll(pageable).map(PacienteListagemDTO::new);
         return ResponseEntity.ok(pacientes);
 
     }

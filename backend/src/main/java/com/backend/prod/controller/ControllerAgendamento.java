@@ -23,6 +23,10 @@ import com.backend.prod.repository.specifications.AgendamentoSpecifications;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
     
 @RestController
 @RequestMapping("/agendamentos")
@@ -36,11 +40,12 @@ public class ControllerAgendamento {
 
     @GetMapping
     @Transactional
-    public ResponseEntity<List<AgendamentoListagemDTO>> listar(
+    public ResponseEntity<Page<AgendamentoListagemDTO>> listar(
             @RequestParam(required = false) String funcionarioEmail,
             @RequestParam(required = false) String pacienteEmail,
             @RequestParam(required = false) LocalDateTime dataInicio,
-            @RequestParam(required = false) LocalDateTime dataFim
+            @RequestParam(required = false) LocalDateTime dataFim,
+            @PageableDefault(size = 10) Pageable pageable
     ){
 
         var spec = Specification
@@ -49,10 +54,8 @@ public class ControllerAgendamento {
                 .and(AgendamentoSpecifications.dataDepois(dataInicio))
                 .and(AgendamentoSpecifications.dataAntes(dataFim));
 
-        var agendamentos = agendamentoRepository.findAll(spec)
-                .stream()
-                .map(AgendamentoListagemDTO::new)
-                .toList();
+        var agendamentos = agendamentoRepository.findAll(spec, pageable)
+                .map(AgendamentoListagemDTO::new);
 
         return ResponseEntity.ok(agendamentos);
     }

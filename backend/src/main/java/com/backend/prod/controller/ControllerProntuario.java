@@ -16,6 +16,10 @@ import com.backend.prod.service.ProntuarioService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+
 @RestController
 @RequestMapping("/prontuarios")
 public class ControllerProntuario {
@@ -27,12 +31,10 @@ public class ControllerProntuario {
     private ProntuarioRepository prontuarioRepository;
 
     @GetMapping
-    public ResponseEntity<List<ProntuarioListagemDTO>> listar(){
+    public ResponseEntity<Page<ProntuarioListagemDTO>> listar(@PageableDefault(size = 10) Pageable pageable){
 
-        var prontuarios = prontuarioRepository.findAll()
-                .stream()
-                .map(ProntuarioListagemDTO::new)
-                .toList();
+        var prontuarios = prontuarioRepository.findAll(pageable)
+                .map(ProntuarioListagemDTO::new);
 
         return ResponseEntity.ok(prontuarios);
 
