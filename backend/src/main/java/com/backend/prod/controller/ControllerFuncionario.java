@@ -57,6 +57,6 @@ public class ControllerFuncionario {
         
         return ResponseEntity.ok(new FuncionarioResponseDTO(funcionario));
     }
-
+ 
     
 }
