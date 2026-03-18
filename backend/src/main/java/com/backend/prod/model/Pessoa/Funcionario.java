@@ -3,7 +3,10 @@ package com.backend.prod.model.Pessoa;
 import com.backend.prod.model.Pessoa.DTOFuncionario.FuncionarioAtualizaDTO;
 import com.backend.prod.model.Pessoa.DTOFuncionario.FuncionarioCadastroDTO;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,6 +16,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Funcionario extends Pessoa {
 
+    @Column(name = "tipo_funcionario")
+    @Enumerated(EnumType.STRING)
     private TipoFuncionario tipoFuncionario;
 
     public Funcionario(FuncionarioCadastroDTO dados) {
@@ -32,10 +37,5 @@ public class Funcionario extends Pessoa {
             dados.nascimento(), 
             dados.email()
         );
-
-        //Exemplo para futuras adições na classe paciente
-        /*if (dados.convenio() != null) {
-            this.convenio = dados.convenio();
-        }*/
     }
 }

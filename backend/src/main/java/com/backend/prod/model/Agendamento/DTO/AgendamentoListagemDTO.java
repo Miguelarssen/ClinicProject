@@ -7,7 +7,8 @@ import com.backend.prod.model.Agendamento.Agendamento;
 public record AgendamentoListagemDTO(    
     Long idAgendamento,
     Long idPaciente,
-    Long idFuncionario,
+    Long idMedico,
+    Long idRecepcionista,
     LocalDateTime dataAgendamento,
     String motivo
 
@@ -16,7 +17,8 @@ public record AgendamentoListagemDTO(
         this(
             agendamento.getId(),
             agendamento.getPaciente().getId(),
-            agendamento.getFuncionario().getId(),
+            agendamento.getMedico().getId(),
+            agendamento.getRecepcionista().getId(),
             agendamento.getDataAgendamento(),
             agendamento.getMotivo()
         );

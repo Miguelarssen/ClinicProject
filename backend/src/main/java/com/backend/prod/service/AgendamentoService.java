@@ -7,6 +7,7 @@ import com.backend.prod.model.Agendamento.Agendamento;
 import com.backend.prod.model.Agendamento.DTO.AgendamentoCadastroDTO;
 import com.backend.prod.model.Pessoa.Funcionario;
 import com.backend.prod.model.Pessoa.Paciente;
+import com.backend.prod.model.Pessoa.TipoFuncionario;
 import com.backend.prod.repository.AgendamentoRepository;
 import com.backend.prod.repository.FuncionarioRepository;
 import com.backend.prod.repository.PacienteRepository;
@@ -24,17 +25,27 @@ public class AgendamentoService {
     private FuncionarioRepository funcionarioRepository;
 
     public Agendamento cadastrar(AgendamentoCadastroDTO dados){
-        Funcionario funcionario = funcionarioRepository.findByEmail(dados.emailFuncionario());
-        if(funcionario == null) {
-            throw new IllegalArgumentException("Funcionário com email " + dados.emailFuncionario() + " não encontrado");
+        Funcionario medico = funcionarioRepository.findByEmail(dados.emailMedico());
+        if (medico == null) {
+            throw new IllegalArgumentException("Funcionário com email " + dados.emailMedico() + " não encontrado");
         }
-        
+        if (!medico.getTipoFuncionario().equals(TipoFuncionario.MEDICO)) {
+            throw new IllegalArgumentException("Funcionário com email " + dados.emailMedico() + " não é um MÉDICO");
+        }
+
         Paciente paciente = pacienteRepository.findByEmail(dados.emailPaciente());
-        if(paciente == null) {
+        if (paciente == null) {
             throw new IllegalArgumentException("Paciente com email " + dados.emailPaciente() + " não encontrado");
         }
 
-        Agendamento agendamento = new Agendamento(dados, funcionario, paciente);
+        Funcionario recepcionista = funcionarioRepository.findByEmail(dados.emailRecepcionista());
+        if (recepcionista == null) {
+            throw new IllegalArgumentException("Funcionário com email " + dados.emailRecepcionista() + " não encontrado");
+        }
+        if (!recepcionista.getTipoFuncionario().equals(TipoFuncionario.RECEPCAO)) {
+            throw new IllegalArgumentException("Funcionário com email " + dados.emailRecepcionista() + " não é da RECEPÇÃO");
+        }
+        Agendamento agendamento = new Agendamento(dados, medico, paciente, recepcionista);
 
         return agendamentoRepository.save(agendamento);
 

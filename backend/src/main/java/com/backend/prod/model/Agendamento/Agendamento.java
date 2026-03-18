@@ -27,9 +27,10 @@ import lombok.Setter;
 
 public class Agendamento {
     
-    public Agendamento(AgendamentoCadastroDTO dados, Funcionario funcionario, Paciente paciente){
-        this.funcionario = funcionario;
+    public Agendamento(AgendamentoCadastroDTO dados, Funcionario medico, Paciente paciente, Funcionario recepcionista){
+        this.medico = medico;
         this.paciente = paciente;
+        this.recepcionista = recepcionista;
         this.dataAgendamento = dados.dataAgendamento();
         this.motivo = dados.motivo();
     }
@@ -39,8 +40,12 @@ public class Agendamento {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "funcionario_id")
-    private Funcionario funcionario;
+    @JoinColumn(name = "medico_id")
+    private Funcionario medico; 
+
+    @ManyToOne
+    @JoinColumn(name = "recepcionista_id")
+    private Funcionario recepcionista;
 
     @ManyToOne
     @JoinColumn(name = "paciente_id")

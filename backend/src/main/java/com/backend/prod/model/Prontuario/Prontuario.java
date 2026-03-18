@@ -28,7 +28,7 @@ public class Prontuario {
 
         this.agendamento = agendamento;
         this.paciente = agendamento.getPaciente();
-        this.medico = agendamento.getFuncionario();
+        this.medico = agendamento.getMedico();
 
         this.dataAtendimento = dados.dataAtendimento();
 
