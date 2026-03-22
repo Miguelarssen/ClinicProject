@@ -2,7 +2,6 @@ package com.backend.prod.model.Prontuario;
 
 import java.time.LocalDateTime;
 
-
 import com.backend.prod.model.Agendamento.Agendamento;
 import com.backend.prod.model.Pessoa.Funcionario;
 import com.backend.prod.model.Pessoa.Paciente;
@@ -31,13 +30,10 @@ public class Prontuario {
         this.medico = agendamento.getMedico();
 
         this.dataAtendimento = dados.dataAtendimento();
-
-        this.queixaPrincipal = dados.queixaPrincipal();
-        this.historiaClinica = dados.historiaClinica();
-        this.exameFisico = dados.exameFisico();
-        this.diagnostico = dados.diagnostico();
-        this.conduta = dados.conduta();
-        this.observacoes = dados.observacoes();
+        
+        // O ID do texto será gerado quando ProntuarioTexto for salvo no MongoDB
+        // Será inicialmente null até que seja persistido
+        this.prontuarioTextoId = null;
     }
     
     @Id
@@ -58,21 +54,43 @@ public class Prontuario {
 
     private LocalDateTime dataAtendimento;
 
-    @Column(columnDefinition = "TEXT")
-    private String queixaPrincipal;
+    @Column(name = "prontuario_texto_id")
+    private String prontuarioTextoId;
 
-    @Column(columnDefinition = "TEXT")
-    private String historiaClinica;
+    // Campos transientes para conveniência (não são persistidos em SQL)
+    @Transient
+    private transient ProntuarioTexto textos;
 
-    @Column(columnDefinition = "TEXT")
-    private String exameFisico;
+    // Getter para acesso conveniente aos textos
+    public String getQueixaPrincipal() {
+        return textos != null ? textos.getQueixaPrincipal() : null;
+    }
 
-    @Column(columnDefinition = "TEXT")
-    private String diagnostico;
+    public String getHistoriaClinica() {
+        return textos != null ? textos.getHistoriaClinica() : null;
+    }
 
-    @Column(columnDefinition = "TEXT")
-    private String conduta;
+    public String getExameFisico() {
+        return textos != null ? textos.getExameFisico() : null;
+    }
 
-    @Column(columnDefinition = "TEXT")
-    private String observacoes;
+    public String getDiagnostico() {
+        return textos != null ? textos.getDiagnostico() : null;
+    }
+
+    public String getConduta() {
+        return textos != null ? textos.getConduta() : null;
+    }
+
+    public String getObservacoes() {
+        return textos != null ? textos.getObservacoes() : null;
+    }
+
+    // Setter para definir os textos (usado pelo service)
+    public void setTextos(ProntuarioTexto textos) {
+        this.textos = textos;
+        if (textos != null) {
+            this.prontuarioTextoId = textos.getId();
+        }
+    }
 }

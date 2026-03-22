@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.backend.prod.model.Prontuario.Prontuario;
 import com.backend.prod.model.Prontuario.DTO.ProntuarioCadastroDTO;
 import com.backend.prod.model.Prontuario.DTO.ProntuarioListagemDTO;
 import com.backend.prod.model.Prontuario.DTO.ProntuarioResponseDTO;
@@ -38,6 +39,17 @@ public class ControllerProntuario {
 
         return ResponseEntity.ok(prontuarios);
 
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ProntuarioResponseDTO> obterPorId(@PathVariable Long id) {
+        Prontuario prontuario = prontuarioService.getProntuarioComTextos(id);
+        
+        if (prontuario == null) {
+            return ResponseEntity.notFound().build();
+        }
+        
+        return ResponseEntity.ok(new ProntuarioResponseDTO(prontuario));
     }
 
     @PostMapping
