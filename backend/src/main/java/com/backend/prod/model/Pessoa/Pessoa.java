@@ -11,7 +11,7 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.Getter;   
 import lombok.NoArgsConstructor;
 
 @Table(name = "pessoa")

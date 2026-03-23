@@ -2,6 +2,7 @@ package com.backend.prod.model.Pessoa.DTOFuncionario;
 
 import java.sql.Date;
 
+import com.backend.prod.model.Pessoa.TipoFuncionario;
 import jakarta.validation.constraints.NotNull;
 
 public record FuncionarioAtualizaDTO(
@@ -11,7 +12,8 @@ public record FuncionarioAtualizaDTO(
     String nome,
     String cpf,
     Date nascimento,
-    String email
+    String email,
+    TipoFuncionario tipoFuncionario
 
 ){
     

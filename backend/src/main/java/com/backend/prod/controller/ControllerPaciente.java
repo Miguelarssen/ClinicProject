@@ -22,6 +22,10 @@ import com.backend.prod.repository.PacienteRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+
 @RestController
 @RequestMapping("/pacientes")
 public class ControllerPaciente {
@@ -31,32 +35,40 @@ public class ControllerPaciente {
 
     @GetMapping
     @Transactional
-    public ResponseEntity<List<PacienteListagemDTO>> listar(){ 
+    public ResponseEntity<Page<PacienteListagemDTO>> listar(@PageableDefault(size = 10) Pageable pageable){ 
 
-        var pacientes = repository.findAll().stream().map(PacienteListagemDTO::new).toList();
+        var pacientes = repository.findAll(pageable).map(PacienteListagemDTO::new);
         return ResponseEntity.ok(pacientes);
 
     }
     
     @PostMapping
     @Transactional  
-    public ResponseEntity<PacienteResponseDTO> cadastrar(@RequestBody @Valid PacienteCadastroDTO dados, UriComponentsBuilder uriBuilder){
-        var paciente = new Paciente(dados); 
-        repository.save(paciente);
+    public ResponseEntity<List<PacienteResponseDTO>> cadastrar(@RequestBody @Valid List<PacienteCadastroDTO> dados, UriComponentsBuilder uriBuilder){
+        var pacientes = dados.stream()
+                .map(Paciente::new)
+                .peek(repository::save)
+                .map(PacienteResponseDTO::new)
+                .toList();
 
-        var uri = uriBuilder.path("/pacientes/{id}").buildAndExpand(paciente.getId()).toUri();
+        var uri = uriBuilder.path("/pacientes").build().toUri();
 
-        return ResponseEntity.created(uri).body(new PacienteResponseDTO(paciente));        
+        return ResponseEntity.created(uri).body(pacientes);        
     }
     
     @PutMapping
     @Transactional
-    public ResponseEntity<PacienteResponseDTO> atualizar(@RequestBody @Valid PacienteAtualizaDTO dados){
-        var Paciente = repository.getReferenceById(dados.id());
-        Paciente.atualizarPaciente(dados);
+    public ResponseEntity<List<PacienteResponseDTO>> atualizar(@RequestBody @Valid List<PacienteAtualizaDTO> dados){
+        var pacientes = dados.stream()
+                .map(dto -> {
+                    var paciente = repository.getReferenceById(dto.id());
+                    paciente.atualizarPaciente(dto);
+                    return paciente;
+                })
+                .map(PacienteResponseDTO::new)
+                .toList();
         
-        return ResponseEntity.ok(new PacienteResponseDTO(Paciente));
+        return ResponseEntity.ok(pacientes);
     }
-
-    
 }
+

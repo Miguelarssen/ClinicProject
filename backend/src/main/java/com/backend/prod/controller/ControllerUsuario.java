@@ -15,13 +15,16 @@ import com.backend.prod.model.Usuario.DTO.LoginDTO;
 import com.backend.prod.model.Usuario.DTO.UsuarioCadastroDTO;
 import com.backend.prod.model.Usuario.DTO.UsuarioListagemDTO;
 import com.backend.prod.model.Usuario.DTO.UsuarioResponseDTO;
-import com.backend.prod.model.Usuario.Usuario;
 import com.backend.prod.repository.FuncionarioRepository;
 import com.backend.prod.repository.UsuarioRepository;
 import com.backend.prod.service.UsuarioService;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 
 @RestController
 @RequestMapping("/usuarios")
@@ -35,25 +38,23 @@ public class ControllerUsuario {
 
     @GetMapping
     @Transactional
-    public ResponseEntity<List<UsuarioListagemDTO>> listar(){
-        var usuarios = usuarioRepository.findAll().stream().map(UsuarioListagemDTO::new).toList();
+    public ResponseEntity<Page<UsuarioListagemDTO>> listar(@PageableDefault(size = 10) Pageable pageable){
+        var usuarios = usuarioRepository.findAll(pageable).map(UsuarioListagemDTO::new);
         return ResponseEntity.ok(usuarios);
     }
 
     @PostMapping
     @Transactional
-    public ResponseEntity<UsuarioResponseDTO> cadastrar(@RequestBody @Valid UsuarioCadastroDTO dados, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<List<UsuarioResponseDTO>> cadastrar(@RequestBody @Valid List<UsuarioCadastroDTO> dados, UriComponentsBuilder uriBuilder) {
 
-        Usuario usuario = usuarioService.cadastrar(dados);
+        var usuarios = dados.stream()
+                .map(usuarioService::cadastrar)
+                .map(UsuarioResponseDTO::new)
+                .toList();
 
-        var uri = uriBuilder
-                .path("/usuarios/{id}")
-                .buildAndExpand(usuario.getId())
-                .toUri();
+        var uri = uriBuilder.path("/usuarios").build().toUri();
 
-        return ResponseEntity
-                .created(uri)
-                .body(new UsuarioResponseDTO(usuario));
+        return ResponseEntity.created(uri).body(usuarios);
     }
 
     @Autowired

@@ -22,6 +22,10 @@ import com.backend.prod.repository.FuncionarioRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+
 @RestController
 @RequestMapping("/funcionarios")
 public class ControllerFuncionario {
@@ -31,32 +35,40 @@ public class ControllerFuncionario {
 
     @GetMapping
     @Transactional
-    public ResponseEntity<List<FuncionarioListagemDTO>> listar(){ 
+    public ResponseEntity<Page<FuncionarioListagemDTO>> listar(@PageableDefault(size = 10) Pageable pageable){ 
 
-        var funcionarios = repository.findAll().stream().map(FuncionarioListagemDTO::new).toList();
+        var funcionarios = repository.findAll(pageable).map(FuncionarioListagemDTO::new);
         return ResponseEntity.ok(funcionarios);
 
     }
     
     @PostMapping
     @Transactional  
-    public ResponseEntity<FuncionarioResponseDTO> cadastrar(@RequestBody @Valid FuncionarioCadastroDTO dados, UriComponentsBuilder uriBuilder){
-        var funcionario = new Funcionario(dados); 
-        repository.save(funcionario);
+    public ResponseEntity<List<FuncionarioResponseDTO>> cadastrar(@RequestBody @Valid List<FuncionarioCadastroDTO> dados, UriComponentsBuilder uriBuilder){
+        var funcionarios = dados.stream()
+                .map(Funcionario::new)
+                .peek(repository::save)
+                .map(FuncionarioResponseDTO::new)
+                .toList();
 
-        var uri = uriBuilder.path("/funcionarios/{id}").buildAndExpand(funcionario.getId()).toUri();
+        var uri = uriBuilder.path("/funcionarios").build().toUri();
 
-        return ResponseEntity.created(uri).body(new FuncionarioResponseDTO(funcionario));        
+        return ResponseEntity.created(uri).body(funcionarios);        
     }
     
     @PutMapping
     @Transactional
-    public ResponseEntity<FuncionarioResponseDTO> atualizar(@RequestBody @Valid FuncionarioAtualizaDTO dados){
-        var funcionario = repository.getReferenceById(dados.id());
-        funcionario.atualizarFuncionario(dados);
+    public ResponseEntity<List<FuncionarioResponseDTO>> atualizar(@RequestBody @Valid List<FuncionarioAtualizaDTO> dados){
+        var funcionarios = dados.stream()
+                .map(dto -> {
+                    var funcionario = repository.getReferenceById(dto.id());
+                    funcionario.atualizarFuncionario(dto);
+                    return funcionario;
+                })
+                .map(FuncionarioResponseDTO::new)
+                .toList();
         
-        return ResponseEntity.ok(new FuncionarioResponseDTO(funcionario));
+        return ResponseEntity.ok(funcionarios);
     }
-
-    
 }
+

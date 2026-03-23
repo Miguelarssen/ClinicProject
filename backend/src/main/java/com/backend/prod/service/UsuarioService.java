@@ -20,7 +20,8 @@ public class UsuarioService {
 
     public Usuario cadastrar(UsuarioCadastroDTO dados) {
 
-        Funcionario funcionario = funcionarioRepository.findById(dados.funcionarioId()).orElseThrow(() -> new RuntimeException("Funcionário não encontrado"));
+        Funcionario funcionario = funcionarioRepository.findById(dados.funcionarioId())
+        .orElseThrow(() -> new RuntimeException("Funcionário não encontrado"));
 
         if (usuarioRepository.existsByFuncionario(funcionario)) {
             throw new RuntimeException("Funcionário já possui usuário");
