@@ -1,40 +1,30 @@
-version: '3.8'
+version: "3.9"
 
 services:
-  clinic-backend:
+  backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    container_name: backend
     ports:
       - "8080:8080"
+    networks:
+      - app-network
     environment:
       - SPRING_PROFILES_ACTIVE=docker
-    depends_on:
-      - sql-server
-    networks:
-      - clinic-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
 
-  sql-server:
-    image: mcr.microsoft.com/mssql/server:2019-latest
-    environment:
-      SA_PASSWORD: "SuaSenhaForte123!"
-      ACCEPT_EULA: "Y"
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
     ports:
-      - "1433:1433"
-    volumes:
-      - sql-data:/var/opt/mssql
+      - "3000:3000"
+    depends_on:
+      - backend
     networks:
-      - clinic-network
-
-volumes:
-  sql-data:
+      - app-network
 
 networks:
-  clinic-network:
+  app-network:
     driver: bridge
