@@ -25,7 +25,7 @@ public record ProntuarioResponseDTO(
             prontuario.getAgendamento().getId(),
             prontuario.getDataAtendimento(),
             prontuario.getQueixaPrincipal(),
-            prontuario.getHistoriaClinica(),
+            prontuario.getHistoriaClinica(),            
             prontuario.getExameFisico(),
             prontuario.getDiagnostico(),
             prontuario.getConduta(),

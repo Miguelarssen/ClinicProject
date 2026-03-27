@@ -10,7 +10,12 @@ public record ProntuarioListagemDTO(
     Long idMedico,
     Long idAgendamento,
     LocalDateTime dataAtendimento,
-    String diagnostico
+    String queixaPrincipal,
+    String historiaClinica,
+    String exameFisico,
+    String diagnostico,
+    String conduta,
+    String observacoes
 ){
     public ProntuarioListagemDTO(Prontuario prontuario){
         this(
@@ -19,7 +24,12 @@ public record ProntuarioListagemDTO(
             prontuario.getMedico().getId(),
             prontuario.getAgendamento().getId(),
             prontuario.getDataAtendimento(),
-            prontuario.getDiagnostico()
+            prontuario.getQueixaPrincipal(),
+            prontuario.getHistoriaClinica(),
+            prontuario.getExameFisico(),
+            prontuario.getDiagnostico(),
+            prontuario.getConduta(),
+            prontuario.getObservacoes()
         );
     }
 }

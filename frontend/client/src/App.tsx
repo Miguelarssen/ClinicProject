@@ -16,11 +16,13 @@ import CadastroAgendamentos from "./pages/Agendamentos/CadastroAgendamentos";
 import ListaProntuarios from "./pages/Prontuarios/ListaProntuarios";
 import DetalheProntuario from "./pages/Prontuarios/DetalheProntuario";
 import CadastroProntuario from "./pages/Prontuarios/CadastroProntuario";
+import Cadastro from "./pages/Cadastro";
 
 function Router() {
   return (
     <Switch>
       <Route path={"/login"} component={Login} />
+      <Route path={"/cadastro"} component={Cadastro} />
       <Route path={"/dashboard"} component={Dashboard} />
       <Route path={"/pacientes"} component={ListaPacientes} />
       <Route path={"/pacientes/novo"} component={CadastroPacientes} />

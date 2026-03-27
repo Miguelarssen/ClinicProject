@@ -8,7 +8,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [usuario, setUsuario] = useState<UsuarioResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Restaurar sessão ao carregar
   useEffect(() => {
     const usuarioSalvo = authService.getUsuarioAtual();
     if (usuarioSalvo) {
@@ -30,6 +29,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const register = async (novoUsuario: { senha: string; funcionario: { idFuncionario: string } }) => {
+    setIsLoading(true);
+    try {
+      const usuarioResponse = await authService.register(novoUsuario);
+      setUsuario(usuarioResponse);
+    } catch (error) {
+      setUsuario(null);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   const logout = () => {
     authService.logout();
     setUsuario(null);
@@ -41,6 +53,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isLoading,
     login,
     logout,
+    register,
   };
 
   return (

@@ -32,13 +32,12 @@ public class ControllerProntuario {
     private ProntuarioRepository prontuarioRepository;
 
     @GetMapping
-    public ResponseEntity<Page<ProntuarioListagemDTO>> listar(@PageableDefault(size = 10) Pageable pageable){
+    public ResponseEntity<Page<ProntuarioListagemDTO>> listar(
+            @PageableDefault(size = 10) Pageable pageable) {
 
-        var prontuarios = prontuarioRepository.findAll(pageable)
-                .map(ProntuarioListagemDTO::new);
+        var prontuarios = prontuarioService.listar(pageable);
 
         return ResponseEntity.ok(prontuarios);
-
     }
 
     @GetMapping("/{id}")

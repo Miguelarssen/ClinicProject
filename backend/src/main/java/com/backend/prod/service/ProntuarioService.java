@@ -3,10 +3,14 @@ package com.backend.prod.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
+
 import com.backend.prod.model.Agendamento.Agendamento;
 import com.backend.prod.model.Prontuario.Prontuario;
 import com.backend.prod.model.Prontuario.ProntuarioTexto;
 import com.backend.prod.model.Prontuario.DTO.ProntuarioCadastroDTO;
+import com.backend.prod.model.Prontuario.DTO.ProntuarioListagemDTO;
 import com.backend.prod.repository.AgendamentoRepository;
 import com.backend.prod.repository.ProntuarioRepository;
 import com.backend.prod.repository.ProntuarioTextoRepository;
@@ -28,7 +32,6 @@ public class ProntuarioService {
             Agendamento agendamento = agendamentoRepository.getReferenceById(dados.idAgendamento());
             Prontuario prontuario = new Prontuario(dados, agendamento);
 
-            // Criar e salvar os textos em MongoDB
             ProntuarioTexto textos = new ProntuarioTexto(
                 dados.queixaPrincipal(),
                 dados.historiaClinica(),
@@ -40,18 +43,29 @@ public class ProntuarioService {
             
             ProntuarioTexto textosSalvos = prontuarioTextoRepository.save(textos);
             
-            // Vincular os textos ao prontuario
             prontuario.setTextos(textosSalvos);
             
-            // Salvar o prontuário em SQL
             return prontuarioRepository.save(prontuario);
         }
 
-        /**
-         * Carrega um prontuário com seus textos do MongoDB
-         * @param prontuarioId ID do prontuário em SQL
-         * @return Prontuário com textos carregados
-         */
+    public Page<ProntuarioListagemDTO> listar(Pageable pageable) {
+
+        var prontuarios = prontuarioRepository.findAll(pageable);
+
+        return prontuarios.map(prontuario -> {
+
+            if (prontuario.getProntuarioTextoId() != null) {
+                var texto = prontuarioTextoRepository
+                    .findById(prontuario.getProntuarioTextoId())
+                    .orElse(null);
+
+                prontuario.setTextos(texto);
+            }
+
+            return new ProntuarioListagemDTO(prontuario);
+        });
+    }        
+
         public Prontuario getProntuarioComTextos(Long prontuarioId) {
             Prontuario prontuario = prontuarioRepository.findById(prontuarioId).orElse(null);
             

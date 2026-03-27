@@ -189,4 +189,8 @@ export interface AuthContextType {
   isLoading: boolean;
   login: (email: string, senha: string) => Promise<void>;
   logout: () => void;
+  register: (novoUsuario: {
+    senha: string;
+    funcionarioId: string;
+}) => Promise<void>;
 }

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation } from "wouter";
+import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -88,6 +88,12 @@ export default function Login() {
                 "Entrar"
               )}
             </Button>
+            <div className="text-center text-sm mt-4">
+              <span className="text-muted-foreground">Não tem uma conta? </span>
+              <Link href="/cadastro" className="text-primary hover:underline font-medium">
+                Criar conta
+              </Link>
+            </div>
           </form>
         </CardContent>
       </Card>

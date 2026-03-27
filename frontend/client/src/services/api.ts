@@ -3,7 +3,7 @@ import axios, { AxiosInstance, AxiosError } from "axios";
 // Configurar URL base da API
 // Use VITE_API_URL para configurar a URL do backend
 // Padrão: http://localhost:8080
-const API_BASE_URL = "http://backend:8080";
+const API_BASE_URL = "http://localhost:8080";
 console.log("API Base URL:", API_BASE_URL);
 
 // Criar instância Axios

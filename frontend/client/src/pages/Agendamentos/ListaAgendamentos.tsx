@@ -92,14 +92,23 @@ export default function ListaAgendamentos() {
                     <TableBody>
                       {agendamentos.map((agendamento) => (
                         <TableRow key={agendamento.id}>
+
                           <TableCell className="font-medium">
                             {agendamento.emailMedico}
                           </TableCell>
-                          <TableCell>{agendamento.emailPaciente}</TableCell>
+
                           <TableCell>
+                            {agendamento.emailPaciente}
+                            </TableCell>
+
+                          <TableCell>                     
                             {formatarData(agendamento.dataAgendamento)}
                           </TableCell>
-                          <TableCell>{agendamento.motivo}</TableCell>
+
+                          <TableCell>
+                            {agendamento.motivo}
+                          </TableCell>
+                          
                         </TableRow>
                       ))}
                     </TableBody>
