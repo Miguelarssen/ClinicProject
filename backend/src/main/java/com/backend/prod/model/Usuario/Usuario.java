@@ -19,8 +19,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity(name="Usuarios")
-@Table(name="usuario")
+@Entity(name = "Usuarios")
+@Table(name = "usuario")
 @Setter
 @Getter
 @AllArgsConstructor
@@ -28,27 +28,28 @@ import lombok.Setter;
 @EqualsAndHashCode(of = "id")
 
 public class Usuario {
-    
+
     public Usuario(UsuarioCadastroDTO dados, Funcionario funcionario) {
         this.funcionario = funcionario;
-        this.senha = new BCryptPasswordEncoder().encode(dados.senha());
+        this.senha = new BCryptPasswordEncoder().encode(dados.senhaUsuario());
     }
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String senha;   
-    
-    @OneToOne
-    @JoinColumn(name="funcionario_id")
-    private Funcionario funcionario;
+    private String senha;
 
-    public boolean login(LoginDTO dados){
+    @OneToOne
+    @JoinColumn(name = "funcionario_id")
+    private Funcionario funcionario;
+    private boolean userGerente;
+
+    public boolean login(LoginDTO dados) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-        if(!encoder.matches(dados.senha(), this.senha)){
+        if (!encoder.matches(dados.senha(), this.senha)) {
             throw new IllegalArgumentException("Senha incorreta");
         }
         return true;
     }
-}   
+}

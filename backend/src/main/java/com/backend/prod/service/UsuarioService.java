@@ -1,6 +1,7 @@
 package com.backend.prod.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.backend.prod.model.Pessoa.Funcionario;
@@ -22,6 +23,15 @@ public class UsuarioService {
 
         Funcionario funcionario = funcionarioRepository.findById(dados.funcionarioId())
         .orElseThrow(() -> new RuntimeException("Funcionário não encontrado"));
+
+        Funcionario gerente = funcionarioRepository.findByEmail(dados.emailFuncionarioGerente());
+        Usuario usuarioGerente = usuarioRepository.findByFuncionario(gerente);
+
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
+        if(!encoder.matches(dados.senhaUsuario(), usuarioGerente.getSenha())){
+            throw new IllegalArgumentException("Senha incorreta");
+        }
 
         if (usuarioRepository.existsByFuncionario(funcionario)) {
             throw new RuntimeException("Funcionário já possui usuário");
