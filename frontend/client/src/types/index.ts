@@ -10,11 +10,19 @@ export interface LoginRequest {
   senha: string;
 }
 
-export interface UsuarioResponse {
+export interface UsuarioData {
   id: number;
+  senha?: string;
+  nome: string;
   email: string;
-  funcionario: FuncionarioResponse;
 }
+
+export interface UsuarioResponse {
+  usuario: UsuarioData;
+  token: string;
+}
+
+
 
 // ============ PESSOA (Base) ============
 
@@ -39,7 +47,7 @@ export interface PacienteAtualizaRequest extends PacienteCadastroRequest {
   id: number;
 }
 
-export interface PacienteResponse extends Pessoa {}
+export interface PacienteResponse extends Pessoa { }
 
 export interface PacienteListagem {
   id: number;
@@ -192,5 +200,5 @@ export interface AuthContextType {
   register: (novoUsuario: {
     senha: string;
     funcionarioId: string;
-}) => Promise<void>;
+  }) => Promise<void>;
 }

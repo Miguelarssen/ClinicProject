@@ -9,11 +9,10 @@ export const authService = {
       "/usuarios/login",
       payload
     );
-    
-    // Armazenar dados de sessão
-    localStorage.setItem("usuario", JSON.stringify(response.data));
-    localStorage.setItem("authToken", JSON.stringify(response.data));
-    
+
+    localStorage.setItem("usuario", JSON.stringify(response.data.usuario));
+    localStorage.setItem("token", response.data.token);
+
     return response.data;
   },
 

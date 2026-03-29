@@ -8,8 +8,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.backend.prod.repository.UsuarioRepository;
 import com.backend.prod.repository.FuncionarioRepository;
+import com.backend.prod.repository.UsuarioRepository;
 import com.backend.prod.service.TokenService;
 
 import jakarta.servlet.FilterChain;

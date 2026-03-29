@@ -3,23 +3,23 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useAuth } from "@/contexts/AuthContext"; 
+import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { Loader2, ArrowLeft } from "lucide-react";
 import { Link } from "wouter";
 
 export default function Register() {
   const [, navigate] = useLocation();
-  const {register, isLoading } = useAuth();
-  
-  const [funcionarioId, setEmail] = useState(""); 
+  const { register, isLoading } = useAuth();
+
+  const [funcionarioId, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [confirmarSenha, setConfirmarSenha] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if ( !funcionarioId || !senha) {
+    if (!funcionarioId || !senha) {
       toast.error("Preencha todos os campos obrigatórios");
       return;
     }
@@ -33,7 +33,7 @@ export default function Register() {
       const novoUsuario = {
         senha,
         funcionarioId,
-        
+
       };
 
       await register(novoUsuario);
@@ -129,7 +129,7 @@ export default function Register() {
                 "Finalizar Cadastro"
               )}
             </Button>
-            
+
             <p className="text-center text-sm text-muted-foreground mt-4">
               Já tem uma conta?{" "}
               <Link href="/" className="text-primary hover:underline font-medium">
