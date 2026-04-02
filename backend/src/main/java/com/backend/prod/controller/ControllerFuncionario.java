@@ -29,22 +29,28 @@ import org.springframework.data.web.PageableDefault;
 @RestController
 @RequestMapping("/funcionarios")
 public class ControllerFuncionario {
-    
+
     @Autowired
     private FuncionarioRepository repository;
 
     @GetMapping
     @Transactional
-    public ResponseEntity<Page<FuncionarioListagemDTO>> listar(@PageableDefault(size = 10) Pageable pageable){ 
+    public ResponseEntity<Page<FuncionarioListagemDTO>> listar(@PageableDefault(size = 10) Pageable pageable) {
 
         var funcionarios = repository.findAll(pageable).map(FuncionarioListagemDTO::new);
         return ResponseEntity.ok(funcionarios);
 
     }
-    
+
+    @GetMapping("/count")
+    public ResponseEntity<Long> count() {
+        return ResponseEntity.ok(repository.count());
+    }
+
     @PostMapping
-    @Transactional  
-    public ResponseEntity<List<FuncionarioResponseDTO>> cadastrar(@RequestBody @Valid List<FuncionarioCadastroDTO> dados, UriComponentsBuilder uriBuilder){
+    @Transactional
+    public ResponseEntity<List<FuncionarioResponseDTO>> cadastrar(
+            @RequestBody @Valid List<FuncionarioCadastroDTO> dados, UriComponentsBuilder uriBuilder) {
         var funcionarios = dados.stream()
                 .map(Funcionario::new)
                 .peek(repository::save)
@@ -53,12 +59,13 @@ public class ControllerFuncionario {
 
         var uri = uriBuilder.path("/funcionarios").build().toUri();
 
-        return ResponseEntity.created(uri).body(funcionarios);        
+        return ResponseEntity.created(uri).body(funcionarios);
     }
-    
+
     @PutMapping
     @Transactional
-    public ResponseEntity<List<FuncionarioResponseDTO>> atualizar(@RequestBody @Valid List<FuncionarioAtualizaDTO> dados){
+    public ResponseEntity<List<FuncionarioResponseDTO>> atualizar(
+            @RequestBody @Valid List<FuncionarioAtualizaDTO> dados) {
         var funcionarios = dados.stream()
                 .map(dto -> {
                     var funcionario = repository.getReferenceById(dto.id());
@@ -67,8 +74,7 @@ public class ControllerFuncionario {
                 })
                 .map(FuncionarioResponseDTO::new)
                 .toList();
-        
+
         return ResponseEntity.ok(funcionarios);
     }
 }
-

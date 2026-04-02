@@ -1,30 +1,75 @@
+import { useEffect, useState } from "react";
 import DashboardLayout from "@/components/Layout/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, Stethoscope, Calendar, FileText } from "lucide-react";
+import apiClient from "@/services/api";
+
+interface Counts {
+  pacientes: string;
+  funcionarios: string;
+  agendamentos: string;
+  prontuarios: string;
+}
 
 export default function Dashboard() {
+  const [counts, setCounts] = useState<Counts>({
+    pacientes: "...",
+    funcionarios: "...",
+    agendamentos: "...",
+    prontuarios: "...",
+  });
+
+  useEffect(() => {
+    const fetchCounts = async () => {
+      try {
+        const [pacientes, funcionarios, agendamentos, prontuarios] = await Promise.all([
+          apiClient.get<number>("/pacientes/count"),
+          apiClient.get<number>("/funcionarios/count"),
+          apiClient.get<number>("/agendamentos/count"),
+          apiClient.get<number>("/prontuarios/count"),
+        ]);
+
+        setCounts({
+          pacientes: String(pacientes.data),
+          funcionarios: String(funcionarios.data),
+          agendamentos: String(agendamentos.data),
+          prontuarios: String(prontuarios.data),
+        });
+      } catch {
+        setCounts({
+          pacientes: "—",
+          funcionarios: "—",
+          agendamentos: "—",
+          prontuarios: "—",
+        });
+      }
+    };
+
+    fetchCounts();
+  }, []);
+
   const stats = [
     {
       title: "Pacientes",
-      value: "0",
+      value: counts.pacientes,
       icon: Users,
       color: "bg-blue-100 text-blue-600",
     },
     {
       title: "Funcionários",
-      value: "0",
+      value: counts.funcionarios,
       icon: Stethoscope,
       color: "bg-green-100 text-green-600",
     },
     {
       title: "Agendamentos",
-      value: "0",
+      value: counts.agendamentos,
       icon: Calendar,
       color: "bg-yellow-100 text-yellow-600",
     },
     {
       title: "Prontuários",
-      value: "0",
+      value: counts.prontuarios,
       icon: FileText,
       color: "bg-purple-100 text-purple-600",
     },
@@ -84,3 +129,4 @@ export default function Dashboard() {
     </DashboardLayout>
   );
 }
+

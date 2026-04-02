@@ -47,6 +47,11 @@ public class ControllerUsuario {
         return ResponseEntity.ok(usuarios);
     }
 
+    @GetMapping("/count")
+    public ResponseEntity<Long> count() {
+        return ResponseEntity.ok(usuarioRepository.count());
+    }
+
     @PostMapping
     @Transactional
     public ResponseEntity<List<UsuarioResponseDTO>> cadastrar(@RequestBody @Valid List<UsuarioCadastroDTO> dados,
