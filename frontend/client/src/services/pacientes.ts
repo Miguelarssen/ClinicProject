@@ -6,12 +6,21 @@ import {
   PageResponse,
 } from "@/types";
 import apiClient from "./api";
+import { authService } from "./auth";
+
+const getAuthHeaders = () => {
+  const token = authService.getToken();
+  return token ? { Authorization: `Bearer ${token}` } : {};
+};
 
 export const pacientesService = {
   async listar(page: number = 0, size: number = 10): Promise<PageResponse<PacienteListagem>> {
     const response = await apiClient.get<PageResponse<PacienteListagem>>(
       "/pacientes",
-      { params: { page, size } }
+      {
+        params: { page, size },
+        headers: getAuthHeaders(),
+      }
     );
     return response.data;
   },
@@ -19,7 +28,8 @@ export const pacientesService = {
   async criar(dados: PacienteCadastroRequest[]): Promise<PacienteResponse[]> {
     const response = await apiClient.post<PacienteResponse[]>(
       "/pacientes",
-      dados
+      dados,
+      { headers: getAuthHeaders() }
     );
     return response.data;
   },
@@ -27,7 +37,8 @@ export const pacientesService = {
   async atualizar(dados: PacienteAtualizaRequest[]): Promise<PacienteResponse[]> {
     const response = await apiClient.put<PacienteResponse[]>(
       "/pacientes",
-      dados
+      dados,
+      { headers: getAuthHeaders() }
     );
     return response.data;
   },

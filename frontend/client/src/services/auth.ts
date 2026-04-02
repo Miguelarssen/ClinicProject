@@ -6,7 +6,7 @@ export const authService = {
   async login(email: string, senha: string): Promise<UsuarioResponse> {
     const payload: LoginRequest = { email, senha };
     const response = await apiClient.post<UsuarioResponse>(
-      "/usuarios/login",
+      "/usuarios/auth/login",
       payload
     );
 
@@ -39,6 +39,9 @@ export const authService = {
     return usuario ? JSON.parse(usuario) : null;
   },
 
+  getToken(): string | null {
+    return localStorage.getItem("token");
+  },
 
   isAuthenticated(): boolean {
     return !!localStorage.getItem("usuario");

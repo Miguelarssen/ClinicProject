@@ -67,11 +67,13 @@ export default function Sidebar() {
           {menuItems.map((item) => {
             const Icon = item.icon;
             return (
-              <Link key={item.href} href={item.href}>
-                <a className="flex items-center gap-3 px-4 py-2 rounded-md hover:bg-accent text-foreground hover:text-accent-foreground transition-colors">
-                  <Icon className="h-5 w-5" />
-                  <span>{item.label}</span>
-                </a>
+              <Link 
+                key={item.href} 
+                href={item.href}
+                className="flex items-center gap-3 px-4 py-2 rounded-md hover:bg-accent text-foreground hover:text-accent-foreground transition-colors"
+              >
+                <Icon className="h-5 w-5" />
+                <span>{item.label}</span>
               </Link>
             );
           })}
