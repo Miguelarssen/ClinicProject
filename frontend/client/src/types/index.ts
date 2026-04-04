@@ -12,16 +12,15 @@ export interface LoginRequest {
 
 export interface UsuarioData {
   id: number;
-  senha?: string;
   nome: string;
   email: string;
+  role: "ADMIN" | "USER";
 }
 
 export interface UsuarioResponse {
   usuario: UsuarioData;
   token: string;
 }
-
 
 
 // ============ PESSOA (Base) ============
@@ -200,5 +199,6 @@ export interface AuthContextType {
   register: (novoUsuario: {
     senha: string;
     funcionarioId: string;
+    role: "ADMIN" | "USER";
   }) => Promise<void>;
 }

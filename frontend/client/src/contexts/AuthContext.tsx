@@ -9,11 +9,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const usuarioSalvo = authService.getUsuarioAtual();
-    if (usuarioSalvo) {
-      setUsuario(usuarioSalvo);
-    }
-    setIsLoading(false);
+    const initAuth = async () => {
+      try {
+        const usuarioSalvo = authService.getUsuarioAtual();
+
+        if (!usuarioSalvo) {
+          setUsuario(null);
+          return;
+        }
+
+        const usuarioValido = await authService.me();
+
+        setUsuario(usuarioValido);
+      } catch {
+        setUsuario(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initAuth();
   }, []);
 
   const login = async (email: string, senha: string) => {
@@ -29,7 +44,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const register = async (novoUsuario: { senha: string; funcionario: { idFuncionario: string } }) => {
+  const register = async (novoUsuario: { senha: string; funcionarioId: string; role: "ADMIN" | "USER" }) => {
     setIsLoading(true);
     try {
       const usuarioResponse = await authService.register(novoUsuario);
@@ -63,7 +78,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function useAuth(): AuthCwontextType {
+export function useAuth(): AuthContextType {
   const context = useContext(AuthContext);
   if (context === undefined) {
     throw new Error("useAuth deve ser usado dentro de AuthProvider");

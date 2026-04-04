@@ -12,6 +12,7 @@ interface Counts {
 }
 
 export default function Dashboard() {
+
   const [counts, setCounts] = useState<Counts>({
     pacientes: "...",
     funcionarios: "...",
@@ -47,6 +48,7 @@ export default function Dashboard() {
 
     fetchCounts();
   }, []);
+
 
   const stats = [
     {

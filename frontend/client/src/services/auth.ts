@@ -16,17 +16,35 @@ export const authService = {
     return response.data;
   },
 
-  async register(novoUsuario: { senha: string; funcionarioId: string }): Promise<UsuarioResponse> {
-    const response = await apiClient.post<UsuarioResponse>(
+  async me(): Promise<UsuarioResponse> {
+    const token = this.getToken();
+
+    const response = await apiClient.get("/usuarios/auth/me", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  },
+
+  async register(novoUsuario: { senha: string; funcionarioId: string; role: string }): Promise<UsuarioResponse> {
+    const response = await apiClient.post<UsuarioResponse[]>(
       "/usuarios",
       [novoUsuario]
     );
 
-    // Armazenar dados de sessão
-    localStorage.setItem("usuario", JSON.stringify(response.data));
-    localStorage.setItem("authToken", JSON.stringify(response.data));
+    const firstUser = response.data[0];
+    // A API retorna uma lista, pegamos o primeiro e simulamos o formato de resposta de login
+    const usuarioResponse: UsuarioResponse = {
+      usuario: firstUser.usuario,
+      token: firstUser.token
+    };
 
-    return response.data;
+    localStorage.setItem("usuario", JSON.stringify(usuarioResponse.usuario));
+    localStorage.setItem("authToken", usuarioResponse.token);
+
+    return usuarioResponse;
   },
 
   logout(): void {
@@ -34,13 +52,13 @@ export const authService = {
     localStorage.removeItem("authToken");
   },
 
-  getUsuarioAtual(): UsuarioResponse | null {
+  getUsuarioAtual(): any | null {
     const usuario = localStorage.getItem("usuario");
     return usuario ? JSON.parse(usuario) : null;
   },
 
   getToken(): string | null {
-    return localStorage.getItem("token");
+    return localStorage.getItem("authToken");
   },
 
   isAuthenticated(): boolean {

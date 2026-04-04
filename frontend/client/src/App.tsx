@@ -18,40 +18,37 @@ import DetalheProntuario from "./pages/Prontuarios/DetalheProntuario";
 import CadastroProntuario from "./pages/Prontuarios/CadastroProntuario";
 import Cadastro from "./pages/Cadastro";
 
+import { ProtectedRoute } from "./components/ProtectedRoute";
+
 function Router() {
   return (
     <Switch>
       <Route path={"/login"} component={Login} />
       <Route path={"/cadastro"} component={Cadastro} />
-      <Route path={"/dashboard"} component={Dashboard} />
-      <Route path={"/pacientes"} component={ListaPacientes} />
-      <Route path={"/pacientes/novo"} component={CadastroPacientes} />
-      <Route path={"/funcionarios"} component={ListaFuncionarios} />
-      <Route path={"/funcionarios/novo"} component={CadastroFuncionarios} />
-      <Route path={"/agendamentos"} component={ListaAgendamentos} />
-      <Route path={"/agendamentos/novo"} component={CadastroAgendamentos} />
-      <Route path={"/prontuarios"} component={ListaProntuarios} />
-      <Route path={"/prontuarios/novo"} component={CadastroProntuario} />
-      <Route path={"/prontuarios/:id"} component={DetalheProntuario} />
-      <Route path={"/"} component={Dashboard} />
+
+      <ProtectedRoute path={"/dashboard"} component={Dashboard} />
+      <ProtectedRoute path={"/pacientes"} component={ListaPacientes} />
+      <ProtectedRoute path={"/pacientes/novo"} component={CadastroPacientes} />
+      <ProtectedRoute path={"/funcionarios"} component={ListaFuncionarios} />
+      <ProtectedRoute path={"/funcionarios/novo"} component={CadastroFuncionarios} />
+      <ProtectedRoute path={"/agendamentos"} component={ListaAgendamentos} />
+      <ProtectedRoute path={"/agendamentos/novo"} component={CadastroAgendamentos} />
+      <ProtectedRoute path={"/prontuarios"} component={ListaProntuarios} />
+      <ProtectedRoute path={"/prontuarios/novo"} component={CadastroProntuario} />
+      <ProtectedRoute path={"/prontuarios/:id"} component={DetalheProntuario} />
+      <ProtectedRoute path={"/"} component={Dashboard} />
+
       <Route path={"/404"} component={NotFound} />
-      {/* Final fallback route */}
       <Route component={NotFound} />
     </Switch>
   );
 }
-
-// NOTE: About Theme
-// - First choose a default theme according to your design style (dark or light bg), than change color palette in index.css
-//   to keep consistent foreground/background color across components
-// - If you want to make theme switchable, pass `switchable` ThemeProvider and use `useTheme` hook
 
 function App() {
   return (
     <ErrorBoundary>
       <ThemeProvider
         defaultTheme="light"
-      // switchable
       >
         <AuthProvider>
           <TooltipProvider>
