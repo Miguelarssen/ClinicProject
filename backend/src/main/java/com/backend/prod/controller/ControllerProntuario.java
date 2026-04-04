@@ -32,29 +32,34 @@ public class ControllerProntuario {
     private ProntuarioRepository prontuarioRepository;
 
     @GetMapping
-    public ResponseEntity<Page<ProntuarioListagemDTO>> listar(@PageableDefault(size = 10) Pageable pageable){
+    public ResponseEntity<Page<ProntuarioListagemDTO>> listar(
+            @PageableDefault(size = 10) Pageable pageable) {
 
-        var prontuarios = prontuarioRepository.findAll(pageable)
-                .map(ProntuarioListagemDTO::new);
+        var prontuarios = prontuarioService.listar(pageable);
 
         return ResponseEntity.ok(prontuarios);
+    }
 
+    @GetMapping("/count")
+    public ResponseEntity<Long> count() {
+        return ResponseEntity.ok(prontuarioRepository.count());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ProntuarioResponseDTO> obterPorId(@PathVariable Long id) {
         Prontuario prontuario = prontuarioService.getProntuarioComTextos(id);
-        
+
         if (prontuario == null) {
             return ResponseEntity.notFound().build();
         }
-        
+
         return ResponseEntity.ok(new ProntuarioResponseDTO(prontuario));
     }
 
     @PostMapping
     @Transactional
-    public ResponseEntity<List<ProntuarioResponseDTO>> cadastrar(@RequestBody @Valid List<ProntuarioCadastroDTO> dados, UriComponentsBuilder uriBuilder){
+    public ResponseEntity<List<ProntuarioResponseDTO>> cadastrar(@RequestBody @Valid List<ProntuarioCadastroDTO> dados,
+            UriComponentsBuilder uriBuilder) {
         var prontuarios = dados.stream()
                 .map(prontuarioService::cadastrar)
                 .map(ProntuarioResponseDTO::new)

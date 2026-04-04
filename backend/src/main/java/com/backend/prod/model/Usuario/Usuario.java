@@ -3,13 +3,18 @@ package com.backend.prod.model.Usuario;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.backend.prod.model.Pessoa.Funcionario;
+import com.backend.prod.model.Pessoa.TipoFuncionario;
 import com.backend.prod.model.Usuario.DTO.LoginDTO;
+
 import com.backend.prod.model.Usuario.DTO.UsuarioCadastroDTO;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -19,8 +24,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity(name="Usuarios")
-@Table(name="usuario")
+@Entity(name = "Usuarios")
+@Table(name = "usuario")
 @Setter
 @Getter
 @AllArgsConstructor
@@ -28,27 +33,32 @@ import lombok.Setter;
 @EqualsAndHashCode(of = "id")
 
 public class Usuario {
-    
-    public Usuario(UsuarioCadastroDTO dados, Funcionario funcionario) {
-        this.funcionario = funcionario;
-        this.senha = new BCryptPasswordEncoder().encode(dados.senha());
-    }
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String senha;   
-    
+    private String senha;
+
     @OneToOne
-    @JoinColumn(name="funcionario_id")
+    @JoinColumn(name = "funcionario_id")
     private Funcionario funcionario;
 
-    public boolean login(LoginDTO dados){
+    @Enumerated(EnumType.STRING)
+    private TipoFuncionario role;
+
+
+    public Usuario(UsuarioCadastroDTO dados, Funcionario funcionario) {
+        this.funcionario = funcionario;
+        this.senha = new BCryptPasswordEncoder().encode(dados.senhaUsuario());
+        this.role = dados.role();
+    }
+
+    public boolean login(LoginDTO dados) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-        if(!encoder.matches(dados.senha(), this.senha)){
+        if (!encoder.matches(dados.senha(), this.senha)) {
             throw new IllegalArgumentException("Senha incorreta");
         }
         return true;
     }
-}   
+}

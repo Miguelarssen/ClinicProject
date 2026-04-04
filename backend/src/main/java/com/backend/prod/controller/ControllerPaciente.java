@@ -29,22 +29,28 @@ import org.springframework.data.web.PageableDefault;
 @RestController
 @RequestMapping("/pacientes")
 public class ControllerPaciente {
-    
+
     @Autowired
     private PacienteRepository repository;
 
     @GetMapping
     @Transactional
-    public ResponseEntity<Page<PacienteListagemDTO>> listar(@PageableDefault(size = 10) Pageable pageable){ 
+    public ResponseEntity<Page<PacienteListagemDTO>> listar(@PageableDefault(size = 10) Pageable pageable) {
 
         var pacientes = repository.findAll(pageable).map(PacienteListagemDTO::new);
         return ResponseEntity.ok(pacientes);
 
     }
-    
+
+    @GetMapping("/count")
+    public ResponseEntity<Long> count() {
+        return ResponseEntity.ok(repository.count());
+    }
+
     @PostMapping
-    @Transactional  
-    public ResponseEntity<List<PacienteResponseDTO>> cadastrar(@RequestBody @Valid List<PacienteCadastroDTO> dados, UriComponentsBuilder uriBuilder){
+    @Transactional
+    public ResponseEntity<List<PacienteResponseDTO>> cadastrar(@RequestBody @Valid List<PacienteCadastroDTO> dados,
+            UriComponentsBuilder uriBuilder) {
         var pacientes = dados.stream()
                 .map(Paciente::new)
                 .peek(repository::save)
@@ -53,12 +59,12 @@ public class ControllerPaciente {
 
         var uri = uriBuilder.path("/pacientes").build().toUri();
 
-        return ResponseEntity.created(uri).body(pacientes);        
+        return ResponseEntity.created(uri).body(pacientes);
     }
-    
+
     @PutMapping
     @Transactional
-    public ResponseEntity<List<PacienteResponseDTO>> atualizar(@RequestBody @Valid List<PacienteAtualizaDTO> dados){
+    public ResponseEntity<List<PacienteResponseDTO>> atualizar(@RequestBody @Valid List<PacienteAtualizaDTO> dados) {
         var pacientes = dados.stream()
                 .map(dto -> {
                     var paciente = repository.getReferenceById(dto.id());
@@ -67,8 +73,7 @@ public class ControllerPaciente {
                 })
                 .map(PacienteResponseDTO::new)
                 .toList();
-        
+
         return ResponseEntity.ok(pacientes);
     }
 }
-
