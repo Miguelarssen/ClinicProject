@@ -18,7 +18,8 @@ CREATE TABLE pessoa (
 -- =========================
 CREATE TABLE funcionario (
     id BIGINT NOT NULL,
-    tipo_funcionario VARCHAR(20) NOT NULL DEFAULT 'RECEPCAO',
+    tipo_funcionario VARCHAR(20) NOT NULL DEFAULT 'RECEPCIONISTA',
+
 
     CONSTRAINT PK_funcionario PRIMARY KEY (id),
 
@@ -27,7 +28,9 @@ CREATE TABLE funcionario (
         ON DELETE CASCADE,
 
     CONSTRAINT CK_funcionario_tipo_funcionario
-        CHECK (tipo_funcionario IN ('MEDICO', 'RECEPCAO'))
+        CHECK (tipo_funcionario IN ('ADMIN', 'MEDICO', 'RECEPCIONISTA'))
+
+
 );
 
 -- =========================
@@ -50,7 +53,7 @@ CREATE TABLE usuario (
     id BIGINT IDENTITY(1,1) NOT NULL,
     senha VARCHAR(255) NOT NULL,
     funcionario_id BIGINT NOT NULL,
-    user_gerente BIT NOT NULL DEFAULT 0,
+    role VARCHAR(50) NOT NULL,
 
     CONSTRAINT PK_usuario PRIMARY KEY (id),
 
@@ -58,7 +61,12 @@ CREATE TABLE usuario (
         FOREIGN KEY (funcionario_id)
         REFERENCES funcionario(id),
 
-    CONSTRAINT UQ_usuario_funcionario UNIQUE (funcionario_id)
+    CONSTRAINT UQ_usuario_funcionario UNIQUE (funcionario_id),
+    
+    CONSTRAINT CK_usuario_role
+        CHECK (role IN ('ADMIN', 'MEDICO', 'RECEPCIONISTA'))
+
+
 );
 
 -- =========================

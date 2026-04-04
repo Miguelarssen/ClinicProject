@@ -11,6 +11,7 @@ import com.backend.prod.model.Pessoa.DTOFuncionario.FuncionarioCadastroDTO;
 import com.backend.prod.model.Pessoa.Funcionario;
 import com.backend.prod.model.Pessoa.TipoFuncionario;
 import com.backend.prod.model.Usuario.Usuario;
+
 import com.backend.prod.repository.FuncionarioRepository;
 import com.backend.prod.repository.UsuarioRepository;
 
@@ -31,14 +32,15 @@ public class dataInitializer {
                         "00000000000",
                         Date.valueOf("2000-01-01"),
                         "admin@admin.com",
-                        TipoFuncionario.MEDICO);
+                        TipoFuncionario.ADMIN);
+
                 var funcionario = new Funcionario(funcionarioDTO);
                 funcionarioRepository.save(funcionario);
 
                 var usuario = new Usuario();
                 usuario.setFuncionario(funcionario);
                 usuario.setSenha(passwordEncoder.encode("123456"));
-                usuario.setUserGerente(true);
+                usuario.setRole(TipoFuncionario.ADMIN);
 
                 usuarioRepository.save(usuario);
 

@@ -3,13 +3,18 @@ package com.backend.prod.model.Usuario;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.backend.prod.model.Pessoa.Funcionario;
+import com.backend.prod.model.Pessoa.TipoFuncionario;
 import com.backend.prod.model.Usuario.DTO.LoginDTO;
+
 import com.backend.prod.model.Usuario.DTO.UsuarioCadastroDTO;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -29,11 +34,6 @@ import lombok.Setter;
 
 public class Usuario {
 
-    public Usuario(UsuarioCadastroDTO dados, Funcionario funcionario) {
-        this.funcionario = funcionario;
-        this.senha = new BCryptPasswordEncoder().encode(dados.senhaUsuario());
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -42,7 +42,16 @@ public class Usuario {
     @OneToOne
     @JoinColumn(name = "funcionario_id")
     private Funcionario funcionario;
-    private boolean userGerente;
+
+    @Enumerated(EnumType.STRING)
+    private TipoFuncionario role;
+
+
+    public Usuario(UsuarioCadastroDTO dados, Funcionario funcionario) {
+        this.funcionario = funcionario;
+        this.senha = new BCryptPasswordEncoder().encode(dados.senhaUsuario());
+        this.role = dados.role();
+    }
 
     public boolean login(LoginDTO dados) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();

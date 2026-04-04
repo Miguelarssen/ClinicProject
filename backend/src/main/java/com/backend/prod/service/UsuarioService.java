@@ -5,8 +5,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.backend.prod.model.Pessoa.Funcionario;
+import com.backend.prod.model.Pessoa.TipoFuncionario;
 import com.backend.prod.model.Usuario.DTO.UsuarioCadastroDTO;
 import com.backend.prod.model.Usuario.Usuario;
+
 import com.backend.prod.repository.FuncionarioRepository;
 import com.backend.prod.repository.UsuarioRepository;
 
@@ -22,14 +24,19 @@ public class UsuarioService {
     public Usuario cadastrar(UsuarioCadastroDTO dados) {
 
         Funcionario funcionario = funcionarioRepository.findById(dados.funcionarioId())
-        .orElseThrow(() -> new RuntimeException("Funcionário não encontrado"));
+                .orElseThrow(() -> new RuntimeException("Funcionário não encontrado"));
 
         Funcionario gerente = funcionarioRepository.findByEmail(dados.emailFuncionarioGerente());
         Usuario usuarioGerente = usuarioRepository.findByFuncionario(gerente);
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-        if(!encoder.matches(dados.senhaUsuario(), usuarioGerente.getSenha())){
+        if (usuarioGerente == null || usuarioGerente.getRole() != TipoFuncionario.ADMIN) {
+
+            throw new RuntimeException("Apenas user admin deve ser capaz de criar usuários");
+        }
+
+        if (!encoder.matches(dados.senhaFuncionarioGerente(), usuarioGerente.getSenha())) {
             throw new IllegalArgumentException("Senha incorreta");
         }
 

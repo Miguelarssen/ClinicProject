@@ -7,7 +7,8 @@ public record UsuarioResponseDTO(
     Long id,
     String senha,
     String nome,
-    String email
+    String email,
+    String role
 
 ) {
     public UsuarioResponseDTO(Usuario usuario){
@@ -15,7 +16,8 @@ public record UsuarioResponseDTO(
             usuario.getId(),
             usuario.getSenha(),
             usuario.getFuncionario().getNome(),
-            usuario.getFuncionario().getEmail()
+            usuario.getFuncionario().getEmail(),
+            usuario.getRole().toString()
         );
     }
 }

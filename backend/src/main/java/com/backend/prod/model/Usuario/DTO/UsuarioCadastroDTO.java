@@ -1,11 +1,14 @@
 package com.backend.prod.model.Usuario.DTO;
 
-public record UsuarioCadastroDTO (
+import com.backend.prod.model.Pessoa.TipoFuncionario;
 
-    Long funcionarioId,
-    String senhaUsuario,
-    String emailFuncionarioGerente,
-    String senhaFuncionarioGerente
+public record UsuarioCadastroDTO(
 
-){
+                Long funcionarioId,
+                String senhaUsuario,
+                String emailFuncionarioGerente,
+                String senhaFuncionarioGerente,
+                TipoFuncionario role
+
+) {
 }

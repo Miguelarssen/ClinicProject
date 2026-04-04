@@ -12,6 +12,8 @@ import com.backend.prod.repository.FuncionarioRepository;
 import com.backend.prod.repository.UsuarioRepository;
 import com.backend.prod.service.TokenService;
 
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import java.util.Collections;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -43,8 +45,9 @@ public class SecurityFilter extends OncePerRequestFilter {
                 if (funcionario != null) {
                     var usuario = usuarioRepository.findByFuncionario(funcionario);
                     if (usuario != null) {
-                        var authentication = new UsernamePasswordAuthenticationToken(usuario, null,
-                                java.util.Collections.emptyList());
+                        var authorities = Collections
+                                .singletonList(new SimpleGrantedAuthority("ROLE_" + usuario.getRole().name()));
+                        var authentication = new UsernamePasswordAuthenticationToken(usuario, null, authorities);
                         SecurityContextHolder.getContext().setAuthentication(authentication);
                     }
                 }

@@ -42,9 +42,10 @@ public class AgendamentoService {
         if (recepcionista == null) {
             throw new IllegalArgumentException("Funcionário com email " + dados.emailRecepcionista() + " não encontrado");
         }
-        if (!recepcionista.getTipoFuncionario().equals(TipoFuncionario.RECEPCAO)) {
-            throw new IllegalArgumentException("Funcionário com email " + dados.emailRecepcionista() + " não é da RECEPÇÃO");
+        if (!recepcionista.getTipoFuncionario().equals(TipoFuncionario.RECEPCIONISTA)) {
+            throw new IllegalArgumentException("Funcionário com email " + dados.emailRecepcionista() + " não é um RECEPCIONISTA");
         }
+
         Agendamento agendamento = new Agendamento(dados, medico, paciente, recepcionista);
 
         return agendamentoRepository.save(agendamento);
