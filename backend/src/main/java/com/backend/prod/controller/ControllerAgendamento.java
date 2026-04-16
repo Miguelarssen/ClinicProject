@@ -27,51 +27,55 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-    
+
 @RestController
 @RequestMapping("/agendamentos")
 public class ControllerAgendamento {
-     @Autowired
-     private AgendamentoRepository agendamentoRepository;
+        @Autowired
+        private AgendamentoRepository agendamentoRepository;
 
-    @Autowired
-    private AgendamentoService agendamentoService;
+        @Autowired
+        private AgendamentoService agendamentoService;
 
+        @GetMapping
+        @Transactional
+        public ResponseEntity<Page<AgendamentoListagemDTO>> listar(
+                        @RequestParam(required = false) String funcionarioEmail,
+                        @RequestParam(required = false) String pacienteEmail,
+                        @RequestParam(required = false) LocalDateTime dataInicio,
+                        @RequestParam(required = false) LocalDateTime dataFim,
+                        @PageableDefault(size = 10) Pageable pageable) {
 
-    @GetMapping
-    @Transactional
-    public ResponseEntity<Page<AgendamentoListagemDTO>> listar(
-            @RequestParam(required = false) String funcionarioEmail,
-            @RequestParam(required = false) String pacienteEmail,
-            @RequestParam(required = false) LocalDateTime dataInicio,
-            @RequestParam(required = false) LocalDateTime dataFim,
-            @PageableDefault(size = 10) Pageable pageable
-    ){
+                var spec = Specification
+                                .where(AgendamentoSpecifications.funcionarioEmail(funcionarioEmail))
+                                .and(AgendamentoSpecifications.pacienteEmail(pacienteEmail))
+                                .and(AgendamentoSpecifications.dataDepois(dataInicio))
+                                .and(AgendamentoSpecifications.dataAntes(dataFim));
 
-        var spec = Specification
-                .where(AgendamentoSpecifications.funcionarioEmail(funcionarioEmail))
-                .and(AgendamentoSpecifications.pacienteEmail(pacienteEmail))
-                .and(AgendamentoSpecifications.dataDepois(dataInicio))
-                .and(AgendamentoSpecifications.dataAntes(dataFim));
+                var agendamentos = agendamentoRepository.findAll(spec, pageable)
+                                .map(AgendamentoListagemDTO::new);
 
-        var agendamentos = agendamentoRepository.findAll(spec, pageable)
-                .map(AgendamentoListagemDTO::new);
+                return ResponseEntity.ok(agendamentos);
+        }
 
-        return ResponseEntity.ok(agendamentos);
-    }
+        @GetMapping("/count")
+        public ResponseEntity<Long> count() {
+                return ResponseEntity.ok(agendamentoRepository.count());
+        }
 
-    @PostMapping
-    @Transactional
-    public ResponseEntity<List<AgendamentoResponseDTO>> cadastrar(@RequestBody @Valid List<AgendamentoCadastroDTO> dados, UriComponentsBuilder uriBuilder){
+        @PostMapping
+        @Transactional
+        public ResponseEntity<List<AgendamentoResponseDTO>> cadastrar(
+                        @RequestBody @Valid List<AgendamentoCadastroDTO> dados, UriComponentsBuilder uriBuilder) {
 
-        var agendamentos = dados.stream()
-                .map(agendamentoService::cadastrar)
-                .map(AgendamentoResponseDTO::new)
-                .toList();
+                var agendamentos = dados.stream()
+                                .map(agendamentoService::cadastrar)
+                                .map(AgendamentoResponseDTO::new)
+                                .toList();
 
-        var uri = uriBuilder.path("/agendamentos").build().toUri();
+                var uri = uriBuilder.path("/agendamentos").build().toUri();
 
-        return ResponseEntity.created(uri).body(agendamentos);
+                return ResponseEntity.created(uri).body(agendamentos);
 
-    }
+        }
 }

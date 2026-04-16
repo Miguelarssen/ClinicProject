@@ -5,13 +5,15 @@ import com.backend.prod.model.Usuario.Usuario;
 public record  UsuarioListagemDTO (    
     Long id,
     String email,
-    String nome
+    String nome,
+    String role
 ){
     public UsuarioListagemDTO(Usuario usuario){
         this(
             usuario.getId(),
             usuario.getFuncionario().getEmail(),
-            usuario.getFuncionario().getNome()
+            usuario.getFuncionario().getNome(),
+            usuario.getRole().toString()
         );
     }
 }
